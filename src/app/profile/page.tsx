@@ -1,8 +1,26 @@
 "use client";
+import axios from 'axios';
 
 export default function Profile() {
-    const handleLogout = () => {
-      window.location.href = '/';
+    const handleLogout = async () => {
+        try {
+            const token = localStorage.getItem('token');
+            if (token) {
+                await axios.post(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/logout`, {}, {
+                    headers: {
+                        Authorization: `Bearer ${token}`
+                    }
+                });
+            }
+            localStorage.removeItem('token');
+            window.location.href = '/';
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Logout failed:', error.response?.data?.message || error.message);
+            } else {
+                console.error('Logout failed:', error);
+            }
+        }
     };
 
     return (

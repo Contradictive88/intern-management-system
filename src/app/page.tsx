@@ -1,5 +1,6 @@
 "use client";
 import { useState } from 'react';
+import axios from 'axios';
 
 const Login = () => {
     const [username, setUsername] = useState('');
@@ -7,8 +8,19 @@ const Login = () => {
 
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        window.location.href = '/profile';
-    };
+        try {
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/login`, { email: username, password });
+            const { token } = response.data;
+            localStorage.setItem('token', token);
+            window.location.href = '/profile';
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                console.error('Login failed:', error.response?.data?.message || error.message);
+            } else {
+                console.error('Login failed:', error);
+            }
+        }
+    };    
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
