@@ -9,7 +9,7 @@ const Login = () => {
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         try {
-            const response = await axios.post(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/login`, { email: username, password });
+            const response = await axios.post(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/login`, { username, password });
             const { token } = response.data;
             localStorage.setItem('token', token);
             window.location.href = '/profile';
