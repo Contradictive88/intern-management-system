@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
+import useAuth from '../hooks/useAuth';
 
 interface DecodedToken {
     username: string;
@@ -14,6 +15,8 @@ interface DecodedToken {
 }
 
 export default function Profile() {
+    useAuth();
+
     const [user, setUser] = useState<DecodedToken | null>(null);
 
     useEffect(() => {

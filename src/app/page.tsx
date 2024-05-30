@@ -1,8 +1,11 @@
 "use client";
 import { useState } from 'react';
 import axios from 'axios';
+import useRedirectIfAuthenticated from './hooks/useRedirectIfAuthenticated';
 
 const Login = () => {
+    useRedirectIfAuthenticated();
+
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
 
