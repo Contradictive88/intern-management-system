@@ -1,7 +1,9 @@
 "use client";
+
 import { useState, useEffect } from 'react';
 import { jwtDecode } from "jwt-decode";
 import axios from 'axios';
+import Layout from '../components/Layout';
 import useAuth from '../hooks/useAuth';
 
 interface DecodedToken {
@@ -11,10 +13,10 @@ interface DecodedToken {
         id: number;
         username: string;
         email: string;
-    }
+    };
 }
 
-export default function Profile() {
+const Profile: React.FC = () => {
     useAuth();
 
     const [user, setUser] = useState<DecodedToken | null>(null);
@@ -22,7 +24,7 @@ export default function Profile() {
     useEffect(() => {
         const token = localStorage.getItem('token');
         if (token) {
-            const decodedToken = jwtDecode(token) as DecodedToken;
+            const decodedToken = jwtDecode<DecodedToken>(token);
             setUser(decodedToken);
         }
     }, []);
@@ -49,7 +51,7 @@ export default function Profile() {
     };
 
     return (
-        <>
+        <Layout>
             {user ? (
                 <div>
                     <p>Hello, {user.user.username}!</p>
@@ -58,9 +60,14 @@ export default function Profile() {
             ) : (
                 <p>Loading...</p>
             )}
-            <button onClick={handleLogout} className="block mt-4 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
+            <button 
+                onClick={handleLogout} 
+                className="block mt-4 px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700"
+            >
                 Logout
             </button>
-        </>
+        </Layout>
     );
-}
+};
+
+export default Profile;
