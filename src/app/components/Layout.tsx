@@ -9,13 +9,13 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
     // Read the initial state from localStorage or default to false
     const [isSidebarRetracted, setIsSidebarRetracted] = useState<boolean>(() => {
-        const storedValue = localStorage.getItem('isSidebarRetracted');
+        const storedValue = typeof window !== "undefined" ? localStorage.getItem('isSidebarRetracted'): false;
         return storedValue ? JSON.parse(storedValue) : false;
     });
 
     // Save the state to localStorage whenever it changes
     useEffect(() => {
-        localStorage.setItem('isSidebarRetracted', JSON.stringify(isSidebarRetracted));
+        typeof window !== "undefined" ? localStorage.setItem('isSidebarRetracted', JSON.stringify(isSidebarRetracted)): false;
     }, [isSidebarRetracted]);
 
     const toggleSidebar = () => {
