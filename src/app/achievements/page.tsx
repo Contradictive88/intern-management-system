@@ -1,11 +1,11 @@
 import Layout from '../components/Layout';
 
-const Profile: React.FC = () => {
+const Achievements: React.FC = () => {
     return (
         <Layout>
-            Profile
+            Achievements
         </Layout>
     );
 };
 
-export default Profile;
+export default Achievements;

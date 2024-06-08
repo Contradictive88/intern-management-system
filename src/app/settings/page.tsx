@@ -1,11 +1,11 @@
 import Layout from '../components/Layout';
 
-const Profile: React.FC = () => {
+const Settings: React.FC = () => {
     return (
         <Layout>
-            Profile
+            Settings
         </Layout>
     );
 };
 
-export default Profile;
+export default Settings;

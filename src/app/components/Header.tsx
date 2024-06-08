@@ -1,18 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { BiArrowToLeft, BiArrowToRight } from "react-icons/bi";
-import { jwtDecode } from "jwt-decode";
+import React, { useMemo } from 'react';
+import { BiArrowToLeft, BiArrowToRight, BiSolidUserCircle, BiChevronDown } from "react-icons/bi";
 import axios from 'axios';
-import { BiSolidUserCircle, BiChevronDown } from 'react-icons/bi';
-
-interface DecodedToken {
-    username: string;
-    role: string;
-    user: {
-        id: number;
-        username: string;
-        email: string;
-    };
-}
+import { useUser } from '../hooks/useUser';
+import { useDropdown } from '../hooks/useDropdown';
 
 interface HeaderProps {
     toggleSidebar: () => void;
@@ -20,21 +10,12 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ toggleSidebar, isRetracted }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const { user, loading } = useUser();
+    const { isOpen, toggleDropdown, dropdownRef } = useDropdown();
 
-    const toggleDropdown = () => {
-      setIsOpen(!isOpen);
-    };
-
-    const [user, setUser] = useState<DecodedToken | null>(null);
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (token) {
-            const decodedToken = jwtDecode<DecodedToken>(token);
-            setUser(decodedToken);
-        }
-    }, []);
+    const greetingMessage = useMemo(() => {
+        return loading ? 'Loading...' : `Hi, ${user?.role}!`;
+    }, [loading, user?.role]);
 
     const handleLogout = async () => {
         try {
@@ -65,20 +46,26 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isRetracted }) => {
                 <BiArrowToLeft className="text-4xl cursor-pointer" onClick={toggleSidebar} />
             )}
             <div className="relative inline-block text-left">
-                <div className="flex items-center cursor-pointer" onClick={toggleDropdown}>
-                    <BiSolidUserCircle className="text-4xl mr-1" />
-                    <BiChevronDown className="text-md" />
+                <div className="flex items-center space-x-2">
+                    <span className="text-md mr-4">
+                        {greetingMessage}
+                    </span>
+
+                    <div className="flex items-center cursor-pointer" onClick={toggleDropdown}>
+                        <BiSolidUserCircle className="text-4xl mr-1" />
+                        <BiChevronDown className="text-md" />
+                    </div>
                 </div>
-                
+
                 {isOpen && (
-                    <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
+                    <div ref={dropdownRef} className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
                         <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
                             <a
                                 href="#"
                                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                 role="menuitem"
-                                onClick={handleLogout} 
-                                >
+                                onClick={handleLogout}
+                            >
                                 Logout
                             </a>
                         </div>
