@@ -1,10 +1,11 @@
-"use client";
+"use client"
 
 import { useState } from 'react';
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const Login = () => {
-    // State hooks to manage username and password input values
+    // State hooks to manage username, password input values, and error messages
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -15,27 +16,32 @@ const Login = () => {
      * @param {React.FormEvent<HTMLFormElement>} e - The form submission event
      */
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-        // Prevent the default form submission behavior
         e.preventDefault();
-        
+    
         try {
-            // Send a POST request to the login API endpoint with the username and password
             const response = await axios.post(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/login`, { username, password });
-            
-            // Extract the token from the response
-            const { token } = response.data;
-            
-            // Store the token in local storage
-            localStorage.setItem('token', token);
-            
-            // Redirect to the profile page
-            window.location.href = '/profile';
-        } catch (error) {
-            // Handle any errors that occur during the login process
-            if (axios.isAxiosError(error)) {
-                setError(error.response?.data?.message || 'Login failed. Please try again.'); // Set error message
+    
+            if (response.status === 200) {
+                const { token } = response.data;
+
+                // Set the token as a cookie using js-cookie
+                Cookies.set('auth_token', token, {
+                    expires: 7, // 1 week
+                    secure: process.env.NODE_ENV !== 'development', // Secure flag should be true in production
+                    sameSite: 'strict',
+                });
+
+                // Redirect to the profile page
+                window.location.href = '/profile';
             } else {
-                setError('Login failed. Please try again.'); // Set generic error message
+                setError('Login failed. Please try again.');
+            }
+        } catch (error) {
+            // Handle login errors
+            if (axios.isAxiosError(error)) {
+                setError(error.response?.data?.message || 'Login failed. Please try again.');
+            } else {
+                setError('Login failed. Please try again.');
             }
         }
     };

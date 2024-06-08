@@ -23,7 +23,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
         setIsSidebarRetracted(!isSidebarRetracted);
     };
 
-    return (
+    return (<>
         <div className="flex h-screen">
             <Sidebar isRetracted={isSidebarRetracted} />
             <div className="flex flex-col flex-1">
@@ -33,7 +33,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
                 </main>
             </div>
         </div>
-    );
+    </>);
 };
 
 export default Layout;
