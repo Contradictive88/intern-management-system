@@ -1,29 +1,44 @@
 "use client";
+
 import { useState } from 'react';
 import axios from 'axios';
-import useRedirectIfAuthenticated from './hooks/useRedirectIfAuthenticated';
 
 const Login = () => {
-    useRedirectIfAuthenticated();
-
+    // State hooks to manage username and password input values
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
+    const [error, setError] = useState('');
 
+    /**
+     * Handles the form submission for login.
+     * 
+     * @param {React.FormEvent<HTMLFormElement>} e - The form submission event
+     */
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+        // Prevent the default form submission behavior
         e.preventDefault();
+        
         try {
+            // Send a POST request to the login API endpoint with the username and password
             const response = await axios.post(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/login`, { username, password });
+            
+            // Extract the token from the response
             const { token } = response.data;
+            
+            // Store the token in local storage
             localStorage.setItem('token', token);
+            
+            // Redirect to the profile page
             window.location.href = '/profile';
         } catch (error) {
+            // Handle any errors that occur during the login process
             if (axios.isAxiosError(error)) {
-                console.error('Login failed:', error.response?.data?.message || error.message);
+                setError(error.response?.data?.message || 'Login failed. Please try again.'); // Set error message
             } else {
-                console.error('Login failed:', error);
+                setError('Login failed. Please try again.'); // Set generic error message
             }
         }
-    };    
+    };
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -62,6 +77,11 @@ const Login = () => {
                             />
                         </div>
                     </div>
+                    {error && (
+                        <div className="text-red-500 text-sm mt-2 text-right">
+                            {error}
+                        </div>
+                    )}
                     <div>
                         <button
                             type="submit"
