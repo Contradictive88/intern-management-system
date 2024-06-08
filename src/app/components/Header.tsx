@@ -1,8 +1,8 @@
 import React, { useMemo } from 'react';
 import { BiArrowToLeft, BiArrowToRight, BiSolidUserCircle, BiChevronDown } from "react-icons/bi";
-import axios from 'axios';
 import { useDropdown } from '../hooks/useDropdown';
 import { jwtDecode } from 'jwt-decode';
+import Cookies from 'js-cookie';
 
 interface HeaderProps {
     toggleSidebar: () => void;
@@ -51,10 +51,9 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar, isRetracted }) => {
 
     const handleLogout = async () => {
         try {
-            // Send a logout request to the backend to clear the authentication token cookie
-            await axios.post(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/logout`, {}, {
-                withCredentials: true // Ensure cookies are sent with the request
-            });
+            // Clear the authentication token cookie on the client side
+            Cookies.remove('auth_token');
+    
             // Redirect to the login page after successful logout
             window.location.href = '/';
         } catch (error) {
