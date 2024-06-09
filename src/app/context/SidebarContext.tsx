@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 
 // Define the type for the context value
@@ -17,21 +17,35 @@ interface SidebarProviderProps {
 
 // Create the provider component
 const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
-  const [isSidebarRetracted, setIsSidebarRetracted] = useState(false);
+  // Initialize the state based on localStorage value
+  const [isSidebarRetracted, setIsSidebarRetracted] = useState<boolean>(() => {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      // Retrieve the stored value from localStorage
+      const storedValue = localStorage.getItem('isSidebarRetracted');
+      return storedValue !== null ? JSON.parse(storedValue) : false;
+    }
+    return false; // Default value when localStorage is not available
+  });
 
+  // Function to toggle the sidebar state
   const toggleSidebar = () => {
     setIsSidebarRetracted((prev) => !prev);
   };
 
+  // Store the current state in localStorage whenever it changes
+  useEffect(() => {
+    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
+      localStorage.setItem('isSidebarRetracted', JSON.stringify(isSidebarRetracted));
+    }
+  }, [isSidebarRetracted]);
+
+  // Context value to be provided to the children components
   const value: SidebarContextValue = {
     isSidebarRetracted,
     toggleSidebar,
   };
 
-  useEffect(() => {
-    localStorage.setItem('isSidebarRetracted', JSON.stringify(isSidebarRetracted));
-  }, [isSidebarRetracted]);
-
+  // Render the context provider with the provided value
   return <SidebarContext.Provider value={value}>{children}</SidebarContext.Provider>;
 };
 
