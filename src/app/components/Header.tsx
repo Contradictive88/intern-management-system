@@ -31,7 +31,7 @@ const Header: React.FC<HeaderProps> = () => {
   }, []);
 
   // Construct the greeting message
-  const greetingMessage = `Hi, ${user?.username || 'Guest'}!`;
+  const greetingMessage = `Hi, ${user?.username || 'Loading...'}!`;
 
   // Logout function
   const handleLogout = async () => {
