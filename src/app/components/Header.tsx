@@ -21,29 +21,25 @@ const Header: React.FC<HeaderProps> = () => {
   const { isSidebarRetracted, toggleSidebar } = useSidebar();
   const { isOpen, toggleDropdown, dropdownRef } = useDropdown();
 
-  const getCookie = (name: string) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop()?.split(';').shift();
+  const getTokenFromCookie = (): string | null => {
+    return Cookies.get('auth_token') || null;
   };
 
-  const token = getCookie('auth_token');
+  const token = getTokenFromCookie();
 
-  let loading = false;
   let user: DecodedToken | null = null;
 
   if (token) {
     try {
-      const decodedToken = jwtDecode<DecodedToken>(token);
-      user = decodedToken;
+      user = jwtDecode<DecodedToken>(token);
     } catch (error) {
       console.error('Error decoding token:', error);
     }
   }
 
   const greetingMessage = useMemo(() => {
-    return loading ? 'Loading...' : `Hi, ${user?.role || 'Guest'}!`;
-  }, [loading, user?.role]);
+    return `Hi, ${user?.username || 'Guest'}!`;
+  }, [user?.username]);
 
   const handleLogout = async () => {
     try {
