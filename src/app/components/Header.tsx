@@ -1,55 +1,50 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { BiArrowToLeft, BiArrowToRight, BiSolidUserCircle, BiChevronDown } from 'react-icons/bi';
 import { useSidebar } from '../context/SidebarContext';
 import { useDropdown } from '../hooks/useDropdown';
+import { getCookie, removeCookie } from '../utils/cookies';
 import { jwtDecode } from 'jwt-decode';
-import Cookies from 'js-cookie';
 
 interface HeaderProps {}
 
 interface DecodedToken {
   username: string;
-  role: string;
-  user: {
-    id: number;
-    username: string;
-    email: string;
-  };
 }
 
 const Header: React.FC<HeaderProps> = () => {
   const { isSidebarRetracted, toggleSidebar } = useSidebar();
   const { isOpen, toggleDropdown, dropdownRef } = useDropdown();
 
-  const getTokenFromCookie = (): string | null => {
-    return Cookies.get('auth_token') || null;
-  };
+  // Get token from cookie
+  const token: string | null = getCookie('auth_token') || null;
 
-  const token = getTokenFromCookie();
-
+  // Set user strong typing
   let user: DecodedToken | null = null;
 
+  // Decode the JWT token to extract user information
   if (token) {
     try {
-      user = jwtDecode<DecodedToken>(token);
+      const decodedToken = jwtDecode<{ user: DecodedToken }>(token);
+      user = decodedToken.user;
     } catch (error) {
       console.error('Error decoding token:', error);
     }
   }
 
-  const greetingMessage = useMemo(() => {
-    return `Hi, ${user?.username || 'Guest'}!`;
-  }, [user?.username]);
+  // Construct the greeting message
+  const greetingMessage = `Hi, ${user?.username || 'Guest'}!`;
 
+  // Logout function
   const handleLogout = async () => {
     try {
-      Cookies.remove('auth_token');
+      removeCookie('auth_token');
       window.location.href = '/';
     } catch (error) {
       console.error('Logout failed:', error);
     }
   };
 
+  // JSX for header component
   return (
     <>
       <header className="bg-gray-100 py-7 pl-7 pr-10 text-center flex justify-between">
