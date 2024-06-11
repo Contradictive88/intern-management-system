@@ -1,7 +1,15 @@
 import Layout from '../components/Layout';
 import InputWithLabel from '../components/InputWithLabel';
+import DateInput from '../components/DateInput';
+import SelectField from '../components/SelectField';
 
 const Profile: React.FC = () => {
+    // Options for the select field
+    const genderOptions = [
+        { value: 'male', label: 'Male' },
+        { value: 'female', label: 'Female' },
+    ];
+
     return (
         <Layout>
             <div className="grid grid-cols-1 gap-y-6 w-full">
@@ -32,26 +40,24 @@ const Profile: React.FC = () => {
                             inputName="placeOfBirth"
                             maxLength={255}
                         />
-                        <div>
-                            <label>Date of Birth</label>
-                            <input type="date"></input>
-                        </div>
-                        <div>
-                            <label>Gender</label>
-                            <select>
-                                <option>Select a Gender</option>
-                                <option>Male</option>
-                                <option>Female</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label>Internship Start Date</label>
-                            <input type="date"></input>
-                        </div>
-                        <div>
-                            <label>Internship End Date</label>
-                            <input type="date"></input>
-                        </div>
+                        <DateInput 
+                            label="Date of Birth"
+                            inputName="dateOfBirth"
+                        />
+                        <SelectField
+                            label="Gender"
+                            inputName="gender"
+                            placeholder="Select a Gender"
+                            options={genderOptions}
+                        />
+                        <DateInput 
+                            label="Internship Start Date"
+                            inputName="internshipStartDate"
+                        />
+                        <DateInput 
+                            label="Internship End Date"
+                            inputName="internshipEndDate"
+                        />
                         <InputWithLabel 
                             label="Department"
                             inputType="text"
@@ -96,7 +102,7 @@ const Profile: React.FC = () => {
                     </form>
                 </div>
                 <div className="grid grid-cols-1 rounded-lg shadow-lg border m-4 p-4">
-                    <span className="text-3xl font-bold text-center mb-4">Contact Details</span>
+                    <span className="text-3xl font-bold text-center mb-4">Change Password</span>
                     <form className="grid grid-cols-3 gap-x-5">
                         <InputWithLabel 
                             label="Old Password"
