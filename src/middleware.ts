@@ -1,5 +1,6 @@
+import { jwtDecode } from 'jwt-decode';
 import { NextRequest, NextResponse } from 'next/server';
-
+import { removeCookie } from './app/utils/cookies';
 /**
  * Parses cookies from the cookie header
  * @param cookieHeader - The cookie header string from the request headers
@@ -20,6 +21,26 @@ function parseCookie(cookieHeader: string | null, name: string): string | null {
   }
 
   return null;
+}
+
+/**
+ * Check if the JWT token has expired
+ * @param token - The JWT token string
+ * @returns True if the token has expired, otherwise false
+ */
+export function isTokenExpired(token: string): boolean {
+  try {
+    const decodedToken: any = jwtDecode(token);
+
+    // Get the expiration time from the token
+    const expirationTime = decodedToken.exp * 1000; // Convert to milliseconds
+
+    // Check if the current time is past the expiration time
+    return Date.now() > expirationTime;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return true; // Treat decoding errors as expired tokens
+  }
 }
 
 /**
@@ -47,6 +68,12 @@ export const middleware = (request: NextRequest) => {
   if (!token && isProtectedRoute) {
     // Redirect to the login page
     return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  // If token is present, not expired, and user is on '/'
+  if (token && !isTokenExpired(token) && request.nextUrl.pathname === '/') {
+    // Redirect to profile
+    return NextResponse.redirect(new URL('/profile', request.url));
   }
 
   // Allow the request to proceed as normal
