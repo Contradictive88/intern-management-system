@@ -1,6 +1,6 @@
 import { jwtDecode } from 'jwt-decode';
 import { NextRequest, NextResponse } from 'next/server';
-import { removeCookie } from './app/utils/cookies';
+
 /**
  * Parses cookies from the cookie header
  * @param cookieHeader - The cookie header string from the request headers
