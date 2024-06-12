@@ -1,5 +1,10 @@
-"use client";
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { setCookie, getCookie } from '../utils/cookies'; // Importing the cookie utility functions
+
+// Define the type for the props expected by SidebarProvider
+interface SidebarProviderProps {
+  children: ReactNode;
+}
 
 // Define the type for the context value
 interface SidebarContextValue {
@@ -10,34 +15,23 @@ interface SidebarContextValue {
 // Create the context
 const SidebarContext = createContext<SidebarContextValue | undefined>(undefined);
 
-// Define the type for the provider props
-interface SidebarProviderProps {
-  children: ReactNode;
-}
-
 // Create the provider component
 const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
-  // Initialize the state based on localStorage value
+  // Initialize the state based on cookie value or default value
   const [isSidebarRetracted, setIsSidebarRetracted] = useState<boolean>(() => {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      // Retrieve the stored value from localStorage
-      const storedValue = localStorage.getItem('isSidebarRetracted');
-      return storedValue !== null ? JSON.parse(storedValue) : false;
-    }
-    return false; // Default value when localStorage is not available
+    const storedValue = getCookie('isSidebarRetracted');
+    return storedValue ? JSON.parse(storedValue) : true; // Change default value to true
   });
 
   // Function to toggle the sidebar state
   const toggleSidebar = () => {
-    setIsSidebarRetracted((prev) => !prev);
+    setIsSidebarRetracted((prev) => {
+      const newValue = !prev;
+      // Update cookie
+      setCookie('isSidebarRetracted', JSON.stringify(newValue));
+      return newValue;
+    });
   };
-
-  // Store the current state in localStorage whenever it changes
-  useEffect(() => {
-    if (typeof window !== 'undefined' && typeof localStorage !== 'undefined') {
-      localStorage.setItem('isSidebarRetracted', JSON.stringify(isSidebarRetracted));
-    }
-  }, [isSidebarRetracted]);
 
   // Context value to be provided to the children components
   const value: SidebarContextValue = {
