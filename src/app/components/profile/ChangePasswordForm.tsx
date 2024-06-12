@@ -1,5 +1,6 @@
 import React from 'react';
 import InputWithLabel from '../InputWithLabel';
+import PrimaryButton from '../PrimaryButton';
 
 /**
  * A form component for changing the password.
@@ -29,6 +30,12 @@ const ChangePasswordForm: React.FC = () => {
           inputName="confirmNewPassword"
           maxLength={255}
         />
+        <PrimaryButton 
+          className="col-start-2 col-span-1 p-3 mt-4"
+          type="submit"
+        >
+          Update Password
+        </PrimaryButton>
       </form>
     </div>
   );

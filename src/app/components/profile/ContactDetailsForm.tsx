@@ -1,5 +1,6 @@
 import React from 'react';
 import InputWithLabel from '../InputWithLabel';
+import PrimaryButton from '../PrimaryButton';
 
 /**
  * A form component for capturing contact details.
@@ -41,6 +42,12 @@ const ContactDetailsForm: React.FC = () => {
           inputName="emergencyContactNumber"
           maxLength={13}
         />
+        <PrimaryButton 
+          className="col-start-2 col-span-1 p-3 mt-4"
+          type="submit"
+        >
+          Update Contact
+        </PrimaryButton>
       </form>
     </div>
   );

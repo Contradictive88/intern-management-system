@@ -2,6 +2,7 @@ import React from 'react';
 import InputWithLabel from '../InputWithLabel';
 import DateInput from '../DateInput';
 import SelectField from '../SelectField';
+import PrimaryButton from '../PrimaryButton';
 
 // Options for the select field
 const genderOptions = [
@@ -66,6 +67,12 @@ const PersonalInformationForm: React.FC = () => {
           inputName="department"
           maxLength={255}
         />
+        <PrimaryButton 
+          className="col-start-2 col-span-1 p-3 mt-4"
+          type="submit"
+        >
+          Update Info
+        </PrimaryButton>
       </form>
     </div>
   );
