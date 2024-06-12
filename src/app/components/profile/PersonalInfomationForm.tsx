@@ -52,19 +52,22 @@ const PersonalInformationForm: React.FC = () => {
           label="Gender"
           inputName="gender"
           options={genderOptions}
+          placeholder="Select a Gender"
         />
         <DateInput 
           label="Internship Start Date"
           inputName="internshipStartDate"
         />
-        <DateInput 
-          label="Internship End Date"
-          inputName="internshipEndDate"
-        />
         <InputWithLabel 
           label="Department"
           inputType="text"
           inputName="department"
+          maxLength={255}
+        />
+        <InputWithLabel 
+          label="Role"
+          inputType="text"
+          inputName="role"
           maxLength={255}
         />
         <PrimaryButton 

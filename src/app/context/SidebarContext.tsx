@@ -1,10 +1,4 @@
-import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react';
-import { setCookie, getCookie } from '../utils/cookies'; // Importing the cookie utility functions
-
-// Define the type for the props expected by SidebarProvider
-interface SidebarProviderProps {
-  children: ReactNode;
-}
+import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 
 // Define the type for the context value
 interface SidebarContextValue {
@@ -15,20 +9,25 @@ interface SidebarContextValue {
 // Create the context
 const SidebarContext = createContext<SidebarContextValue | undefined>(undefined);
 
+// Define the type for the props expected by SidebarProvider
+interface SidebarProviderProps {
+  children: ReactNode;
+}
+
 // Create the provider component
 const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
-  // Initialize the state based on cookie value or default value
+  // Initialize the state
   const [isSidebarRetracted, setIsSidebarRetracted] = useState<boolean>(() => {
-    const storedValue = getCookie('isSidebarRetracted');
-    return storedValue ? JSON.parse(storedValue) : true; // Change default value to true
+    const storedValue = localStorage.getItem('isSidebarRetracted');
+    return storedValue === 'true'; // Convert string to boolean
   });
 
   // Function to toggle the sidebar state
   const toggleSidebar = () => {
-    setIsSidebarRetracted((prev) => {
+    setIsSidebarRetracted(prev => {
       const newValue = !prev;
-      // Update cookie
-      setCookie('isSidebarRetracted', JSON.stringify(newValue));
+      // Update local storage
+      localStorage.setItem('isSidebarRetracted', newValue.toString()); // Convert boolean to string
       return newValue;
     });
   };
@@ -44,7 +43,7 @@ const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
 };
 
 // Create a custom hook to access the context value
-const useSidebar = () => {
+const useSidebar = (): SidebarContextValue => {
   const context = useContext(SidebarContext);
   if (!context) {
     throw new Error('useSidebar must be used within a SidebarProvider');
