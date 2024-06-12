@@ -18,7 +18,7 @@ interface SidebarProviderProps {
 const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
   // Initialize the state
   const [isSidebarRetracted, setIsSidebarRetracted] = useState<boolean>(() => {
-    const storedValue = localStorage.getItem('isSidebarRetracted');
+    const storedValue = sessionStorage.getItem('isSidebarRetracted');
     return storedValue === 'true'; // Convert string to boolean
   });
 
@@ -27,7 +27,7 @@ const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
     setIsSidebarRetracted(prev => {
       const newValue = !prev;
       // Update local storage
-      localStorage.setItem('isSidebarRetracted', newValue.toString()); // Convert boolean to string
+      sessionStorage.setItem('isSidebarRetracted', newValue.toString()); // Convert boolean to string
       return newValue;
     });
   };
