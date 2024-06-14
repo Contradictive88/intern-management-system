@@ -1,10 +1,68 @@
+"use client";
 import React, { useState, ChangeEvent, FormEvent } from 'react';
 import InputWithLabel from '../InputWithLabel';
 import DateInput from '../DateInput';
 import SelectField from '../SelectField';
 import PrimaryButton from '../PrimaryButton';
 import { genderOptions } from '../../constants/genderOptions';
-import updatePersonalInformation, { FormData, ApiResponse } from '../../api/updatePersonalInfromation';
+
+export interface FormData {
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  placeOfBirth: string;
+  dateOfBirth: string;
+  gender: string;
+}
+
+// Define the structure of the API response
+export interface ApiResponse {
+  data: any; // Replace with the actual data type from your API response
+}
+
+/**
+ * Utility function to handle the API request for updating personal information.
+ * 
+ * @param {FormData} formData - The form data to be sent in the request body
+ * @returns {Promise<ApiResponse>} - The API response
+ * @throws {Error} - Throws error if the API request fails
+ */
+const updatePersonalInformation = async (formData: FormData): Promise<ApiResponse> => {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/personal-information`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData),
+      credentials: 'include', // Include cookies with the request
+    });
+
+    if (!response.ok) {
+      // Try to parse the error response as JSON
+      let errorResponse;
+      try {
+        errorResponse = await response.json();
+      } catch {
+        // If parsing fails, use the status text as the error message
+        throw new Error(response.statusText || 'Failed to update personal information');
+      }
+      // If the error response contains a message, throw it
+      if (errorResponse && errorResponse.message) {
+        throw new Error(errorResponse.message);
+      } else {
+        // If no message, throw a generic error
+        throw new Error('Failed to update personal information');
+      }
+    }
+
+    // Parse and return the JSON response if the request was successful
+    return await response.json();
+  } catch (error) {
+    const errorMessage = (error as Error).message || 'Error updating personal information';
+    throw new Error(errorMessage);
+  }
+};
 
 /**
  * A page component for capturing personal information.
@@ -31,8 +89,9 @@ const PersonalInformationPage: React.FC = () => {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response: ApiResponse = await updatePersonalInformation(formData);
-      console.log(response); // Log the response from the API
+      await updatePersonalInformation(formData);
+
+      // Reset form after successful submission
       setFormData({
         firstName: '',
         middleName: '',
@@ -110,9 +169,5 @@ const PersonalInformationPage: React.FC = () => {
     </div>
   );
 };
-
-export async function getStaticProps() {
-  return { props: {}, revalidate: 60 };
-}
 
 export default PersonalInformationPage;

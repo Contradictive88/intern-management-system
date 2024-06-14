@@ -1,39 +1,55 @@
 "use client"
 import { useState, FormEvent } from 'react';
-import axios, { AxiosError, AxiosResponse } from 'axios';
-import { setCookie } from './utils/cookies';
+import { setCookie } from './utils/cookies'; // Make sure to implement this utility function
 
 interface ApiResponse {
+    success?: boolean;
+    data?: {
+        token?: string;
+    };
     message?: string;
+    errors?: {
+        error: string;
+    }[];
 }
 
 const Login: React.FC = () => {
+  // State variables for form inputs and error message
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [error, setError] = useState<string>('');
 
+  // Handle the login form submission
   const handleLogin = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
 
     try {
-      const response: AxiosResponse<{ token: string }> = await axios.post(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/login`, {
-        username,
-        password,
+      // Send a POST request to the Laravel API for login
+      const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password }),
       });
 
-      if (response.status === 200) {
-        const { token } = response.data;
-        setCookie('auth_token', token, { expires: 7 });
-        window.location.href = '/profile';
+      if (response.ok) {
+        const data: ApiResponse = await response.json();
+        const { token } = data.data || {};
+
+        if (token) {
+          // Set the auth token as a cookie
+          setCookie('auth_token', token, { expires: 7 });
+
+          // Redirect to the profile page upon successful login
+          window.location.href = '/profile';
+        }
       } else {
-        setError('Login failed. Please try again.');
+        const data: ApiResponse = await response.json();
+        setError(data.message || 'Login failed. Please try again.');
       }
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        const axiosError: AxiosError = error;
-        const responseData: ApiResponse = axiosError.response?.data || {};
-        setError(responseData.message || 'Login failed. Please try again.');
-      }
+      setError('Login failed. Please try again.');
     }
   };
 
