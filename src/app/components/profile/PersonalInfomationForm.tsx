@@ -1,10 +1,11 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import React, { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import InputWithLabel from '../InputWithLabel';
 import DateInput from '../DateInput';
 import SelectField from '../SelectField';
 import PrimaryButton from '../PrimaryButton';
 import { genderOptions } from '../../constants/genderOptions';
+import { useUser, UserData } from '../../context/UserContext';
 
 export interface FormData {
   firstName: string;
@@ -70,6 +71,7 @@ const updatePersonalInformation = async (formData: FormData): Promise<ApiRespons
  * @returns {JSX.Element} - The rendered component
  */
 const PersonalInformationPage: React.FC = () => {
+  const { user, loading, error } = useUser();
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     middleName: '',
@@ -78,6 +80,20 @@ const PersonalInformationPage: React.FC = () => {
     dateOfBirth: '',
     gender: '',
   });
+
+  // useEffect to update form data when user context updates
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        firstName: user.first_name,
+        middleName: user.middle_name || '',
+        lastName: user.last_name,
+        placeOfBirth: user.place_of_birth || '',
+        dateOfBirth: user.date_of_birth || '',
+        gender: user.gender || '',
+      });
+    }
+  }, [user]);
 
   // Function to handle form field changes
   const handleInputChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

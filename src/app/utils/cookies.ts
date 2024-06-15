@@ -24,11 +24,21 @@ export const setCookie = (name: string, value: string, options: CookieOptions = 
 /**
  * Get the value of a cookie by name.
  *
+ * @param {string} cookieHeader - The cookie header string from the request headers.
  * @param {string} name - The name of the cookie to retrieve.
  * @returns {string | undefined} - The value of the cookie, or undefined if not found.
  */
-export const getCookie = (name: string): string | undefined => {
-  return Cookies.get(name);
+export const getCookie = (cookieHeader: string | null, name: string): string | undefined => {
+  if (cookieHeader) {
+    const cookies = cookieHeader.split(';');
+    for (const cookie of cookies) {
+      const [cookieName, cookieValue] = cookie.trim().split('=');
+      if (cookieName === name) {
+        return decodeURIComponent(cookieValue);
+      }
+    }
+  }
+  return undefined;
 };
 
 /**

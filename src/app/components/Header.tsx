@@ -1,13 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { BiArrowToLeft, BiArrowToRight, BiSolidUserCircle, BiChevronDown } from 'react-icons/bi';
 import { useSidebar } from '../context/SidebarContext';
 import { useDropdown } from '../hooks/useDropdown';
+import { useUser, UserData } from '../context/UserContext';
 
-interface HeaderProps {}
-
-const Header: React.FC<HeaderProps> = () => {
+const Header: React.FC = () => {
   const { isSidebarRetracted, toggleSidebar } = useSidebar();
   const { isOpen, toggleDropdown, dropdownRef } = useDropdown();
+  const { user, loading, error } = useUser();
+
+  // Function to format full name
+  const getFullName = (userData: UserData | null): string => {
+    if (!userData) return '';
+    const { first_name, middle_name, last_name } = userData;
+    return `${first_name} ${middle_name ? middle_name + ' ' : ''}${last_name}`;
+  };
 
   // JSX for the header component
   return (
@@ -19,13 +26,25 @@ const Header: React.FC<HeaderProps> = () => {
           <BiArrowToLeft className="text-4xl cursor-pointer" onClick={toggleSidebar} />
         )}
         <div className="relative inline-block text-left">
-          <div className="flex items-center space-x-2">
-            <span className="text-md mr-4">Hi!</span>
-            <div className="flex items-center cursor-pointer" onClick={toggleDropdown}>
-              <BiSolidUserCircle className="text-4xl mr-1" />
-              <BiChevronDown className="text-md" />
+          {loading ? (
+            <div className="flex items-center space-x-2">
+              <span className="text-md mr-4">Loading...</span>
+              <div className="flex items-center cursor-pointer" onClick={toggleDropdown}>
+                <BiSolidUserCircle className="text-4xl mr-1" />
+                <BiChevronDown className="text-md" />
+              </div>
             </div>
-          </div>
+          ) : error ? (
+            <div className="text-red-600">{error}</div>
+          ) : (
+            <div className="flex items-center space-x-2">
+              <span className="text-md mr-4">{`Hi, ${getFullName(user)}!`}</span>
+              <div className="flex items-center cursor-pointer" onClick={toggleDropdown}>
+                <BiSolidUserCircle className="text-4xl mr-1" />
+                <BiChevronDown className="text-md" />
+              </div>
+            </div>
+          )}
           {isOpen && (
             <div ref={dropdownRef} className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
               <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
