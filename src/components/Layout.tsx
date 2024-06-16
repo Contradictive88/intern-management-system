@@ -11,17 +11,15 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <UserProvider>
-      <SidebarContextProvider>
-        <div className="flex h-screen">
-          <Sidebar />
-          <div className="flex flex-col flex-1">
-            <Header />
-            <main className="flex-1 p-4 overflow-auto">{children}</main>
-          </div>
+    <SidebarContextProvider>
+      <div className="flex h-screen">
+        <Sidebar />
+        <div className="flex flex-col flex-1">
+          <Header />
+          <main className="flex-1 p-4 overflow-auto">{children}</main>
         </div>
-      </SidebarContextProvider>
-    </UserProvider>
+      </div>
+    </SidebarContextProvider>
   );
 };
 

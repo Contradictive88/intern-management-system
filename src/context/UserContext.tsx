@@ -1,3 +1,4 @@
+"use client"
 import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
 import { getCookie } from '../utils/cookies';
 
@@ -22,7 +23,7 @@ interface UserContextType {
   user: UserData | null;
   loading: boolean;
   error?: string | null;
-  fetchUser: () => Promise<void>; // Corrected return type to Promise<void>
+  fetchUser: () => Promise<void>;
 }
 
 // Create a context with initial values
@@ -30,13 +31,13 @@ const initialContext: UserContextType = {
   user: null,
   loading: true,
   error: null,
-  fetchUser: async () => {}, // Placeholder function
+  fetchUser: async () => {},
 };
 
 interface ApiResponse {
   success?: boolean;
   data?: {
-    user?: UserData; // Adjusted for user data response
+    user?: UserData;
     token?: string;
   };
   message?: string;
@@ -66,10 +67,9 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
         },
         credentials: 'include',
       });
-  
+
       if (response.ok) {
         const data: UserData = await response.json();
-  
         if (data) {
           setUser(data);
           setError(null);
@@ -87,7 +87,6 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  // Fetch user data on component mount or whenever dependencies change
   useEffect(() => {
     fetchUser();
   }, []);
