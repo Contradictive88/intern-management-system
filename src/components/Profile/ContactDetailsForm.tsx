@@ -7,13 +7,6 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 import { getCookie } from '../../utils/cookies';
 
 interface FormData {
-  firstName: string;
-  middleName: string;
-  lastName: string;
-  placeOfBirth: string;
-  dateOfBirth: string;
-  gender: string;
-  username: string;
   email: string;
   recoveryEmail: string,
   phoneNumber: string,

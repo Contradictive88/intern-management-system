@@ -16,12 +16,6 @@ interface FormData {
   placeOfBirth: string;
   dateOfBirth: string;
   gender: string;
-  username: string;
-  email: string;
-  recoveryEmail: string,
-  phoneNumber: string,
-  emergencyContactName: string,
-  emergencyContactNumber: string,
 }
 
 const PersonalInformationPage: React.FC = () => {
