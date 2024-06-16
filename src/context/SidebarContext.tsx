@@ -19,9 +19,6 @@ const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
   // Initialize the state
   const [isSidebarRetracted, setIsSidebarRetracted] = useState<boolean>(() => {
     const storedValue = sessionStorage.getItem('isSidebarRetracted');
-    if (storedValue === null) {
-      return true; // Default value if nothing is stored
-    }
     return storedValue === 'true'; // Convert string to boolean
   });
 

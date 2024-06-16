@@ -13,6 +13,10 @@ export type UserData = {
   gender: string;
   username: string;
   email: string;
+  recovery_email: string;
+  phone_number: string;
+  emergency_contact_name: string;
+  emergency_contact_number: string;
   email_verified_at: string;
   created_at: string;
   updated_at: string;

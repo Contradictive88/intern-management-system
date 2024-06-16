@@ -7,14 +7,21 @@ import SelectField from '../SelectField';
 import PrimaryButton from '../PrimaryButton';
 import { genderOptions } from '../../constants/genderOptions';
 import { useUser } from '../../context/UserContext';
+import { getCookie } from '../../utils/cookies';
 
-export interface FormData {
+interface FormData {
   firstName: string;
   middleName: string;
   lastName: string;
   placeOfBirth: string;
   dateOfBirth: string;
   gender: string;
+  username: string;
+  email: string;
+  recoveryEmail: string,
+  phoneNumber: string,
+  emergencyContactName: string,
+  emergencyContactNumber: string,
 }
 
 const PersonalInformationPage: React.FC = () => {
@@ -34,10 +41,13 @@ const PersonalInformationPage: React.FC = () => {
 
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
     try {
+      const authToken = getCookie(document.cookie, 'auth_token');
       const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/personal-information`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
         },
         body: JSON.stringify(formData),
         credentials: 'include',
@@ -65,39 +75,33 @@ const PersonalInformationPage: React.FC = () => {
         <InputWithLabel 
           label="First Name"
           inputType="text"
-          inputName="firstName"
           maxLength={255}
           {...register('firstName')}
         />
         <InputWithLabel 
           label="Middle Name"
           inputType="text"
-          inputName="middleName"
           maxLength={255}
           {...register('middleName')}
         />
         <InputWithLabel 
           label="Last Name"
           inputType="text"
-          inputName="lastName"
           maxLength={255}
           {...register('lastName')}
         />
         <InputWithLabel 
           label="Place of Birth"
           inputType="text"
-          inputName="placeOfBirth"
           maxLength={255}
           {...register('placeOfBirth')}
         />
         <DateInput 
           label="Date of Birth"
-          inputName="dateOfBirth"
           {...register('dateOfBirth')}
         />
         <SelectField
-          label="Sex"
-          inputName="gender"
+          label="Gender"
           options={genderOptions}
           placeholder="Select a Gender"
           {...register('gender')}
