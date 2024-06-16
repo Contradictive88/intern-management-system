@@ -1,21 +1,22 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
-// Define the props interface for the FlexibleInput component
+// Define the props interface for the DateInput component
 interface DateInputProps {
   label: string;       // The text to display in the label
   inputName: string;   // The name attribute for the input field
-  value?: string;      // The current value of the input field (optional)
-  maxLength?: number;  // The maximum length for the input field (optional)
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void; // Event handler for the input's onChange event (optional)
+  [x: string]: any; // To accept additional props such as `ref` from react-hook-form
 }
 
 /**
- * A flexible input component that can be used in various forms.
+ * A flexible date input component that can be used in various forms.
  * 
  * @param {DateInputProps} props - The properties for the component
+ * @param {React.Ref} ref - The reference to the input element
  * @returns {JSX.Element} - The rendered component
  */
-const DateInput: React.FC<DateInputProps> = ({ label, inputName, value, onChange }) => {
+const DateInput = forwardRef<HTMLInputElement, DateInputProps>((props, ref) => {
+  const { label, inputName, ...rest } = props;
+
   return (
     <div className="mb-4">
       <label htmlFor={inputName} className="block text-sm font-medium text-gray-700 mb-1">
@@ -26,11 +27,13 @@ const DateInput: React.FC<DateInputProps> = ({ label, inputName, value, onChange
         type="date"
         id={inputName}
         name={inputName}
-        value={value}
-        onChange={onChange}
+        ref={ref}
+        {...rest}
       />
     </div>
   );
-};
+});
+
+DateInput.displayName = 'DateInput';
 
 export default DateInput;

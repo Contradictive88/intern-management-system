@@ -3,7 +3,6 @@ import React, { ReactNode } from 'react';
 import Header from './Header';
 import Sidebar from './Sidebar';
 import SidebarContextProvider from '../context/SidebarContext';
-import { UserProvider } from '../context/UserContext';
 
 interface LayoutProps {
   children: ReactNode;

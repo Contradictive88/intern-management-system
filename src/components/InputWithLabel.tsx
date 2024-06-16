@@ -1,22 +1,24 @@
-import React from 'react';
+import React, { forwardRef } from 'react';
 
-// Define the props interface for the FlexibleInput component
+// Define the props interface for the InputWithLabel component
 interface InputWithLabelProps {
   label: string;       // The text to display in the label
   inputType: string;   // The type of the input field (e.g., "text", "email", "password")
   inputName: string;   // The name attribute for the input field
-  value?: string;      // The current value of the input field (optional)
   maxLength?: number;  // The maximum length for the input field (optional)
-  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void; // Event handler for the input's onChange event (optional)
+  [x: string]: any; // To accept additional props such as `ref` from react-hook-form
 }
 
 /**
  * A flexible input component that can be used in various forms.
  * 
  * @param {InputWithLabelProps} props - The properties for the component
+ * @param {React.Ref} ref - The reference to the input element
  * @returns {JSX.Element} - The rendered component
  */
-const InputWithLabel: React.FC<InputWithLabelProps> = ({ label, inputType, inputName, value, maxLength, onChange }) => {
+const InputWithLabel = forwardRef<HTMLInputElement, InputWithLabelProps>((props, ref) => {
+  const { label, inputType, inputName, maxLength, ...rest } = props;
+
   return (
     <div className="mb-4">
       <label htmlFor={inputName} className="block text-sm font-medium text-gray-700 mb-1">
@@ -28,11 +30,13 @@ const InputWithLabel: React.FC<InputWithLabelProps> = ({ label, inputType, input
         id={inputName}
         name={inputName}
         maxLength={maxLength}
-        value={value}
-        onChange={onChange}
+        ref={ref}
+        {...rest}
       />
     </div>
   );
-};
+});
+
+InputWithLabel.displayName = 'InputWithLabel';
 
 export default InputWithLabel;
