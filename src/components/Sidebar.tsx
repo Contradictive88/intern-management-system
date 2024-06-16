@@ -4,8 +4,7 @@ import React from 'react';
 import { BiSolidUser, BiSolidTrophy, BiSolidCube } from 'react-icons/bi';
 import { RiPagesFill } from 'react-icons/ri';
 import { IoMdSettings } from 'react-icons/io';
-import { usePathname } from 'next/navigation';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { useSidebar } from '../context/SidebarContext';
 
 const Sidebar: React.FC = () => {

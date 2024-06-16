@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { getCookie, removeCookie } from './app/utils/cookies';
+import { getCookie, removeCookie } from './utils/cookies';
 
 /**
  * Middleware function to handle requests

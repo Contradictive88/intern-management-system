@@ -1,7 +1,7 @@
-import Layout from '../components/Layout';
-import PersonalInformationForm from '../components/profile/PersonalInfomationForm';
-import ContactDetailsForm from '../components/profile/ContactDetailsForm';
-import ChangePasswordForm from '../components/profile/ChangePasswordForm';
+import Layout from '../../components/Layout';
+import PersonalInformationForm from '../../components/Profile/PersonalInfomationForm';
+import ContactDetailsForm from '../../components/Profile/ContactDetailsForm';
+import ChangePasswordForm from '../../components/Profile/ChangePasswordForm';
 
 const Profile: React.FC = () => {
     return (

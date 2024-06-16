@@ -1,6 +1,6 @@
 "use client"
 import { useState, FormEvent } from 'react';
-import { setCookie } from './utils/cookies'; // Make sure to implement this utility function
+import { setCookie } from '../utils/cookies'; // Make sure to implement this utility function
 
 interface ApiResponse {
     success?: boolean;
