@@ -5,7 +5,7 @@ import DateInput from '../DateInput';
 import SelectField from '../SelectField';
 import PrimaryButton from '../PrimaryButton';
 import { genderOptions } from '../../constants/genderOptions';
-import { useUser, UserData } from '../../context/UserContext';
+import { useUser } from '../../context/UserContext';
 
 export interface FormData {
   firstName: string;
