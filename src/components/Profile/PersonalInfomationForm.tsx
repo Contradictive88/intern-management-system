@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import InputWithLabel from '../InputWithLabel';
 import DateInput from '../DateInput';
@@ -11,6 +11,22 @@ import { useUser } from '../../context/UserContext';
 import { useEditViewMode } from '../../context/EditViewModeContext';
 import updatePersonalInformation from '../../services/Profile/updatePersonalInformation';
 
+// Define the interface for user data
+interface UserData {
+  first_name: string;
+  middle_name: string | null;
+  last_name: string;
+  place_of_birth: string;
+  date_of_birth: string;
+  gender: string;
+  email: string;
+  username: string;
+  recovery_email: string | null;
+  phone_number: string | null;
+  emergency_contact_name: string | null;
+  emergency_contact_number: string | null;
+}
+
 // Define the interface for form data
 interface FormData {
   firstName: string;
@@ -20,6 +36,7 @@ interface FormData {
   dateOfBirth: string;
   gender: string;
   email: string;
+  username: string;
   recoveryEmail: string;
   phoneNumber: string;
   emergencyContactName: string;
@@ -29,41 +46,32 @@ interface FormData {
 const PersonalInformationPage: React.FC = () => {
   // Get user context
   const { user } = useUser();
-  
+
   // Use isEditing state from context
   const { isEditing, setIsEditing } = useEditViewMode();
 
   // Initialize form methods from react-hook-form
   const { register, handleSubmit, setValue, formState: { errors }, reset } = useForm<FormData>();
 
+  // State to manage displayed user information
+  const [displayUser, setDisplayUser] = useState<UserData | null>(null);
+
   // Update form values from user data on component mount or user change
   useEffect(() => {
     if (user) {
-      const {
-        first_name,
-        middle_name,
-        last_name,
-        place_of_birth,
-        date_of_birth,
-        gender,
-        email,
-        recovery_email,
-        phone_number,
-        emergency_contact_name,
-        emergency_contact_number,
-      } = user;
-
-      setValue('firstName', first_name);
-      setValue('middleName', middle_name || '');
-      setValue('lastName', last_name);
-      setValue('placeOfBirth', place_of_birth || '');
-      setValue('dateOfBirth', date_of_birth || '');
-      setValue('gender', gender || '');
-      setValue('email', email);
-      setValue('recoveryEmail', recovery_email || '');
-      setValue('phoneNumber', phone_number);
-      setValue('emergencyContactName', emergency_contact_name || '');
-      setValue('emergencyContactNumber', emergency_contact_number || '');
+      setDisplayUser(user);
+      setValue('firstName', user.first_name);
+      setValue('middleName', user.middle_name || '');
+      setValue('lastName', user.last_name);
+      setValue('placeOfBirth', user.place_of_birth);
+      setValue('dateOfBirth', user.date_of_birth);
+      setValue('gender', user.gender);
+      setValue('email', user.email);
+      setValue('username', user.username);
+      setValue('recoveryEmail', user.recovery_email || '');
+      setValue('phoneNumber', user.phone_number || '');
+      setValue('emergencyContactName', user.emergency_contact_name || '');
+      setValue('emergencyContactNumber', user.emergency_contact_number || '');
     }
   }, [user, setValue]);
 
@@ -72,6 +80,25 @@ const PersonalInformationPage: React.FC = () => {
     try {
       await updatePersonalInformation(formData);
       setIsEditing(false); // Set isEditing to false to switch to display mode
+
+      // Construct displayUser object based on formData
+      const updatedDisplayUser: UserData = {
+        first_name: formData.firstName,
+        middle_name: formData.middleName || null,
+        last_name: formData.lastName,
+        place_of_birth: formData.placeOfBirth,
+        date_of_birth: formData.dateOfBirth,
+        gender: formData.gender,
+        email: formData.email,
+        username: formData.username,
+        recovery_email: formData.recoveryEmail || null,
+        phone_number: formData.phoneNumber || null,
+        emergency_contact_name: formData.emergencyContactName || null,
+        emergency_contact_number: formData.emergencyContactNumber || null,
+      };
+
+      setDisplayUser(updatedDisplayUser); // Update display state with updated user data
+
       // Reset form fields
       reset({
         firstName: formData.firstName,
@@ -81,6 +108,7 @@ const PersonalInformationPage: React.FC = () => {
         dateOfBirth: formData.dateOfBirth,
         gender: formData.gender,
         email: formData.email,
+        username: formData.username,
         recoveryEmail: formData.recoveryEmail,
         phoneNumber: formData.phoneNumber,
         emergencyContactName: formData.emergencyContactName,
@@ -101,6 +129,7 @@ const PersonalInformationPage: React.FC = () => {
               label="First Name"
               inputType="text"
               inputName="firstName"
+              maxLength={255}
               {...register('firstName', { 
                 required: 'First name is required', 
                 maxLength: { value: 255, message: 'First name must be less than 255 characters' } 
@@ -111,13 +140,17 @@ const PersonalInformationPage: React.FC = () => {
               label="Middle Name"
               inputType="text"
               inputName="middleName"
-              {...register('middleName', { maxLength: { value: 255, message: 'Middle name must be less than 255 characters' } })}
+              maxLength={255}
+              {...register('middleName', { 
+                maxLength: { value: 255, message: 'Middle name must be less than 255 characters' } 
+              })}
               error={errors.middleName?.message}
             />
             <InputWithLabel 
               label="Last Name"
               inputType="text"
               inputName="lastName"
+              maxLength={255}
               {...register('lastName', { 
                 required: 'Last name is required', 
                 maxLength: { value: 255, message: 'Last name must be less than 255 characters' } 
@@ -128,20 +161,39 @@ const PersonalInformationPage: React.FC = () => {
               label="Place of Birth"
               inputType="text"
               inputName="placeOfBirth"
-              {...register('placeOfBirth', { maxLength: { value: 255, message: 'Place of birth must be less than 255 characters' } })}
+              maxLength={255}
+              {...register('placeOfBirth', { 
+                required: 'Place of birth is required', 
+                maxLength: { value: 255, message: 'Place of birth must be less than 255 characters' } 
+              })}
               error={errors.placeOfBirth?.message}
             />
             <DateInput 
               label="Date of Birth"
-              {...register('dateOfBirth')}
+              {...register('dateOfBirth', { 
+                required: 'Date of Birth is required'
+              })}
               error={errors.dateOfBirth?.message}
             />
             <SelectField
               label="Gender"
               options={genderOptions}
               placeholder="Select a Gender"
-              {...register('gender', { required: 'Please select a gender' })}
+              {...register('gender', { 
+                required: 'Please select a gender' })
+              }
               error={errors.gender?.message}
+            />
+            <InputWithLabel 
+              label="Username"
+              inputType="text"
+              inputName="username"
+              maxLength={255}
+              {...register('username', { 
+                required: 'Username is required', 
+                maxLength: { value: 255, message: 'Username must be less than 255 characters' } 
+              })}
+              error={errors.username?.message}
             />
             <InputWithLabel 
               label="Email Address"
@@ -160,15 +212,19 @@ const PersonalInformationPage: React.FC = () => {
               label="Recovery Email"
               inputType="text"
               maxLength={255}
-              {...register('recoveryEmail')}
+              {...register('recoveryEmail', {
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Invalid recovery email address'
+                }
+              })}
               error={errors.recoveryEmail?.message}
             />
             <InputWithLabel 
               label="Phone Number"
               inputType="text"
-              maxLength={12} // Adjusted for the format 09XX-XXX-XXXX
+              maxLength={13}
               {...register('phoneNumber', {
-                required: 'Phone number is required',
                 pattern: {
                   value: /^\d{4}-\d{3}-\d{4}$/,
                   message: 'Invalid phone number format (e.g., 09XX-XXX-XXXX)'
@@ -180,13 +236,15 @@ const PersonalInformationPage: React.FC = () => {
               label="Emergency Contact Name"
               inputType="text"
               maxLength={255}
-              {...register('emergencyContactName')}
+              {...register('emergencyContactName', {
+                maxLength: { value: 255, message: 'Emergency Contact Name must be less than 255 characters' } 
+              })}              
               error={errors.emergencyContactName?.message}
             />
             <InputWithLabel 
               label="Emergency Contact Number"
               inputType="text"
-              maxLength={12} // Adjusted for the format 09XX-XXX-XXXX
+              maxLength={13}
               {...register('emergencyContactNumber', {
                 pattern: {
                   value: /^\d{4}-\d{3}-\d{4}$/,
@@ -206,47 +264,51 @@ const PersonalInformationPage: React.FC = () => {
           <>
             <DisplayField 
               label="First Name"
-              value={user?.first_name || ''}
+              value={displayUser?.first_name || 'N/A'}
             />
             <DisplayField 
               label="Middle Name"
-              value={user?.middle_name || ''}
+              value={displayUser?.middle_name || 'N/A'}
             />
             <DisplayField 
               label="Last Name"
-              value={user?.last_name || ''}
+              value={displayUser?.last_name || 'N/A'}
             />
             <DisplayField 
               label="Place of Birth"
-              value={user?.place_of_birth || ''}
+              value={displayUser?.place_of_birth || 'N/A'}
             />
             <DisplayField 
               label="Date of Birth"
-              value={user?.date_of_birth || ''}
+              value={displayUser?.date_of_birth || 'N/A'}
             />
             <DisplayField 
               label="Gender"
-              value={user?.gender || ''}
+              value={displayUser?.gender || 'N/A'}
             />
             <DisplayField 
               label="Email Address"
-              value={user?.email || ''}
+              value={displayUser?.email || 'N/A'}
+            />
+            <DisplayField 
+              label="Username"
+              value={displayUser?.username || 'N/A'}
             />
             <DisplayField 
               label="Recovery Email"
-              value={user?.recovery_email || ''}
+              value={displayUser?.recovery_email || 'N/A'}
             />
             <DisplayField 
               label="Phone Number"
-              value={user?.phone_number || ''}
+              value={displayUser?.phone_number || 'N/A'}
             />
             <DisplayField 
               label="Emergency Contact Name"
-              value={user?.emergency_contact_name || ''}
+              value={displayUser?.emergency_contact_name || 'N/A'}
             />
             <DisplayField 
               label="Emergency Contact Number"
-              value={user?.emergency_contact_number || ''}
+              value={displayUser?.emergency_contact_number || 'N/A'}
             />
           </>
         )}

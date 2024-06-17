@@ -9,7 +9,7 @@ const DisplayField: React.FC<DisplayFieldProps> = ({ label, value }) => {
   return (
     <span>
       <label className="font-bold text-lg">{label}</label>
-      <div className="p-2 w-full my-3 ml-3">{value}</div>
+      <div className="p-2 w-full my-3 ml-3 break-words">{value}</div>
     </span>
   );
 };

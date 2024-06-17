@@ -62,7 +62,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const fetchUser = async () => {
     try {
       const authToken = getCookie(document.cookie, 'auth_token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/users/me`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/users`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

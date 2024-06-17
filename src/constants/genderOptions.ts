@@ -4,7 +4,7 @@ export interface Option {
   }
   
   export const genderOptions: Option[] = [
-    { value: 'male', label: 'Male' },
-    { value: 'female', label: 'Female' },
+    { value: 'Male', label: 'Male' },
+    { value: 'Female', label: 'Female' },
   ];
   
