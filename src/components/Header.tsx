@@ -1,8 +1,10 @@
 import React from 'react';
 import { BiArrowToLeft, BiArrowToRight, BiSolidUserCircle, BiChevronDown } from 'react-icons/bi';
+import { useRouter } from 'next/router';
 import { useSidebar } from '../context/SidebarContext';
 import { useDropdown } from '../hooks/useDropdown';
 import { useUser, UserData } from '../context/UserContext';
+import { removeCookie, getCookie } from '../utils/cookies';
 
 const Header: React.FC = () => {
   const { isSidebarRetracted, toggleSidebar } = useSidebar();
@@ -14,6 +16,35 @@ const Header: React.FC = () => {
     if (!userData) return '';
     const { first_name, middle_name, last_name } = userData;
     return `${first_name} ${middle_name ? middle_name + ' ' : ''}${last_name}`;
+  };
+
+  // Function to handle logout
+  const handleLogout = async () => {
+    try {
+      const authToken = getCookie(document.cookie, 'auth_token');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/logout`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Authorization': `Bearer ${authToken}`,
+        },
+        credentials: 'include',
+      });
+
+      if (response.ok) {
+        // Logout successful, remove the auth_token cookie
+        removeCookie('auth_token'); // Assuming you have implemented a removeCookie function
+
+        // Redirect to home page
+        window.location.href = '/';
+      } else {
+        // Handle logout failure
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   // JSX for the header component
@@ -48,7 +79,7 @@ const Header: React.FC = () => {
           {isOpen && (
             <div ref={dropdownRef} className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
               <div className="py-1" role="menu" aria-orientation="vertical" aria-labelledby="options-menu">
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem">
+                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" onClick={handleLogout}>
                   Logout
                 </a>
               </div>
