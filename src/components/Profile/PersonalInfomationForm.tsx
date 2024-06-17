@@ -120,7 +120,7 @@ const PersonalInformationPage: React.FC = () => {
   };
 
   return (
-    <div className="grid grid-cols-1 gap-y-3 rounded-lg shadow-lg border m-4 p-4">
+    <div className="grid grid-cols-1 gap-y-3 rounded-lg shadow-lg border m-4 p-4 break-words">
       <span className="text-3xl font-bold text-center mb-4">Personal Information</span>
       <form className="grid grid-cols-3 gap-x-5" onSubmit={handleSubmit(onSubmit)}>
         {isEditing ? (
