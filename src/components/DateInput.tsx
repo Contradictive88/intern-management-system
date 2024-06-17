@@ -26,7 +26,6 @@ const DateInput = forwardRef<HTMLInputElement, DateInputProps>((props, ref) => {
         className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
         type="date"
         id={inputName}
-        name={inputName}
         ref={ref}
         {...rest}
       />

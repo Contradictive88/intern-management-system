@@ -2,11 +2,12 @@ import React, { forwardRef } from 'react';
 
 // Define the props interface for the InputWithLabel component
 interface InputWithLabelProps {
-  label: string;       // The text to display in the label
-  inputType: string;   // The type of the input field (e.g., "text", "email", "password")
-  inputName: string;   // The name attribute for the input field
-  maxLength?: number;  // The maximum length for the input field (optional)
-  [x: string]: any; // To accept additional props such as `ref` from react-hook-form
+  label: string;         // The text to display in the label
+  inputType: string;     // The type of the input field (e.g., "text", "email", "password")
+  inputName: string;     // The name attribute for the input field
+  maxLength?: number;    // The maximum length for the input field (optional)
+  error?: string | undefined; // Error message to display
+  [x: string]: any;      // To accept additional props such as `ref` from react-hook-form
 }
 
 /**
@@ -17,7 +18,7 @@ interface InputWithLabelProps {
  * @returns {JSX.Element} - The rendered component
  */
 const InputWithLabel = forwardRef<HTMLInputElement, InputWithLabelProps>((props, ref) => {
-  const { label, inputType, inputName, maxLength, ...rest } = props;
+  const { label, inputType, inputName, maxLength, error, ...rest } = props;
 
   return (
     <div className="mb-4">
@@ -25,14 +26,14 @@ const InputWithLabel = forwardRef<HTMLInputElement, InputWithLabelProps>((props,
         {label}
       </label>
       <input
-        className="border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full"
+        className={`border border-gray-300 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500 w-full ${error ? 'border-red-500' : ''}`}
         type={inputType}
         id={inputName}
-        name={inputName}
-        maxLength={maxLength}
         ref={ref}
+        maxLength={maxLength}
         {...rest}
       />
+      {error && <span className="text-red-500 text-sm">{error}</span>}
     </div>
   );
 });

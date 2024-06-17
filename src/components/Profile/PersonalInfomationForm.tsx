@@ -1,4 +1,4 @@
-"use client";
+"use client"
 import React, { useEffect, useState } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import InputWithLabel from '../InputWithLabel';
@@ -9,7 +9,7 @@ import DisplayField from '../DisplayField';
 import { genderOptions } from '../../constants/genderOptions';
 import { useUser } from '../../context/UserContext';
 import { useEditViewMode } from '../../context/EditViewModeContext';
-import { getCookie } from '../../utils/cookies';
+import updatePersonalInformation from '../../services/Profile/updatePersonalInformation';
 
 // Define the interface for form data
 interface FormData {
@@ -23,13 +23,13 @@ interface FormData {
 
 const PersonalInformationPage: React.FC = () => {
   // Get user context
-  const { user, loading, error } = useUser();
+  const { user } = useUser();
   
   // Use isEditing state from context
   const { isEditing, setIsEditing } = useEditViewMode(); // Assuming setIsEditing is provided by useEditViewMode
 
   // Initialize form methods from react-hook-form
-  const { register, handleSubmit, setValue, reset } = useForm<FormData>();
+  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<FormData>();
 
   // Initialize state to manage form values
   const [formData, setFormData] = useState<FormData>({
@@ -64,52 +64,26 @@ const PersonalInformationPage: React.FC = () => {
   // Handle form submission
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
     try {
-      // Format the data to match API expectations (snake_case)
-      const formattedData = {
-        first_name: formData.firstName,
-        middle_name: formData.middleName,
-        last_name: formData.lastName,
-        place_of_birth: formData.placeOfBirth,
-        date_of_birth: formData.dateOfBirth,
-        gender: formData.gender.toLowerCase() // Ensure lowercase as per your example
-      };
+      await updatePersonalInformation(formData);
 
-      const authToken = getCookie(document.cookie, 'auth_token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/users/personal-information`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Authorization': `Bearer ${authToken}`,
-        },
-        body: JSON.stringify(formattedData),
-        credentials: 'include',
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to update personal information');
-      }
-
-      // Handle success
       // Reset form fields
       reset({
-        firstName: formattedData.first_name,
-        middleName: formattedData.middle_name,
-        lastName: formattedData.last_name,
-        placeOfBirth: formattedData.place_of_birth,
-        dateOfBirth: formattedData.date_of_birth,
-        gender: formattedData.gender
+        firstName: formData.firstName,
+        middleName: formData.middleName,
+        lastName: formData.lastName,
+        placeOfBirth: formData.placeOfBirth,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender
       });
 
       // Update local state with new form data
       setFormData({
-        firstName: formattedData.first_name,
-        middleName: formattedData.middle_name,
-        lastName: formattedData.last_name,
-        placeOfBirth: formattedData.place_of_birth,
-        dateOfBirth: formattedData.date_of_birth,
-        gender: formattedData.gender
+        firstName: formData.firstName,
+        middleName: formData.middleName,
+        lastName: formData.lastName,
+        placeOfBirth: formData.placeOfBirth,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender
       });
 
       // Set isEditing to false to switch to display mode
@@ -121,7 +95,7 @@ const PersonalInformationPage: React.FC = () => {
         console.error(error.message || 'An unexpected error occurred');
       } else {
         console.error('An unexpected error occurred');
-      }    
+      } 
     }
   };
 
@@ -161,26 +135,36 @@ const PersonalInformationPage: React.FC = () => {
             <InputWithLabel 
               label="First Name"
               inputType="text"
-              maxLength={255}
-              {...register('firstName')}
+              inputName="firstName"
+              {...register('firstName', { 
+                required: 'First name is required', 
+                maxLength: { value: 255, message: 'First name must be less than 255 characters' } 
+              })}
+              error={errors.firstName?.message}
             />
             <InputWithLabel 
               label="Middle Name"
               inputType="text"
-              maxLength={255}
-              {...register('middleName')}
+              inputName="middleName"
+              {...register('middleName', { maxLength: { value: 255, message: 'Middle name must be less than 255 characters' } })}
+              error={errors.middleName?.message}
             />
             <InputWithLabel 
               label="Last Name"
               inputType="text"
-              maxLength={255}
-              {...register('lastName')}
+              inputName="lastName"
+              {...register('lastName', { 
+                required: 'Last name is required', 
+                maxLength: { value: 255, message: 'Last name must be less than 255 characters' } 
+              })}
+              error={errors.lastName?.message}
             />
             <InputWithLabel 
               label="Place of Birth"
               inputType="text"
-              maxLength={255}
-              {...register('placeOfBirth')}
+              inputName="placeOfBirth"
+              {...register('placeOfBirth', { maxLength: { value: 255, message: 'Place of birth must be less than 255 characters' } })}
+              error={errors.placeOfBirth?.message}
             />
             <DateInput 
               label="Date of Birth"

@@ -62,7 +62,7 @@ const ContactDetailsForm: React.FC = () => {
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
     try {
       const authToken = getCookie(document.cookie, 'auth_token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/contact-details`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/users/contact-details`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
