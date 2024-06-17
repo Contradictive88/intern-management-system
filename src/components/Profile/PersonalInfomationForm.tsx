@@ -20,10 +20,10 @@ interface FormData {
   dateOfBirth: string;
   gender: string;
   email: string;
-  recoveryEmail: string,
-  phoneNumber: string,
-  emergencyContactName: string,
-  emergencyContactNumber: string,
+  recoveryEmail: string;
+  phoneNumber: string;
+  emergencyContactName: string;
+  emergencyContactNumber: string;
 }
 
 const PersonalInformationPage: React.FC = () => {
@@ -34,22 +34,36 @@ const PersonalInformationPage: React.FC = () => {
   const { isEditing, setIsEditing } = useEditViewMode();
 
   // Initialize form methods from react-hook-form
-  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>();
+  const { register, handleSubmit, setValue, formState: { errors }, reset } = useForm<FormData>();
 
   // Update form values from user data on component mount or user change
   useEffect(() => {
     if (user) {
-      setValue('firstName', user.first_name);
-      setValue('middleName', user.middle_name || '');
-      setValue('lastName', user.last_name);
-      setValue('placeOfBirth', user.place_of_birth || '');
-      setValue('dateOfBirth', user.date_of_birth || '');
-      setValue('gender', user.gender || '');
-      setValue('email', user.email);
-      setValue('recoveryEmail', user.recovery_email || '');
-      setValue('phoneNumber', user.phone_number);
-      setValue('emergencyContactName', user.emergency_contact_name || '');
-      setValue('emergencyContactNumber', user.emergency_contact_number || '');
+      const {
+        first_name,
+        middle_name,
+        last_name,
+        place_of_birth,
+        date_of_birth,
+        gender,
+        email,
+        recovery_email,
+        phone_number,
+        emergency_contact_name,
+        emergency_contact_number,
+      } = user;
+
+      setValue('firstName', first_name);
+      setValue('middleName', middle_name || '');
+      setValue('lastName', last_name);
+      setValue('placeOfBirth', place_of_birth || '');
+      setValue('dateOfBirth', date_of_birth || '');
+      setValue('gender', gender || '');
+      setValue('email', email);
+      setValue('recoveryEmail', recovery_email || '');
+      setValue('phoneNumber', phone_number);
+      setValue('emergencyContactName', emergency_contact_name || '');
+      setValue('emergencyContactNumber', emergency_contact_number || '');
     }
   }, [user, setValue]);
 
@@ -58,6 +72,20 @@ const PersonalInformationPage: React.FC = () => {
     try {
       await updatePersonalInformation(formData);
       setIsEditing(false); // Set isEditing to false to switch to display mode
+      // Reset form fields
+      reset({
+        firstName: formData.firstName,
+        middleName: formData.middleName,
+        lastName: formData.lastName,
+        placeOfBirth: formData.placeOfBirth,
+        dateOfBirth: formData.dateOfBirth,
+        gender: formData.gender,
+        email: formData.email,
+        recoveryEmail: formData.recoveryEmail,
+        phoneNumber: formData.phoneNumber,
+        emergencyContactName: formData.emergencyContactName,
+        emergencyContactNumber: formData.emergencyContactNumber,
+      });
     } catch (error: unknown) {
       console.error((error as Error).message || 'An unexpected error occurred');
     }
@@ -106,42 +134,66 @@ const PersonalInformationPage: React.FC = () => {
             <DateInput 
               label="Date of Birth"
               {...register('dateOfBirth')}
+              error={errors.dateOfBirth?.message}
             />
             <SelectField
               label="Gender"
               options={genderOptions}
               placeholder="Select a Gender"
-              {...register('gender')}
+              {...register('gender', { required: 'Please select a gender' })}
+              error={errors.gender?.message}
             />
             <InputWithLabel 
               label="Email Address"
               inputType="text"
               maxLength={255}
-              {...register('email')}
+              {...register('email', {
+                required: 'Email address is required',
+                pattern: {
+                  value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                  message: 'Invalid email address'
+                }
+              })}
+              error={errors.email?.message}
             />
             <InputWithLabel 
               label="Recovery Email"
               inputType="text"
               maxLength={255}
               {...register('recoveryEmail')}
+              error={errors.recoveryEmail?.message}
             />
             <InputWithLabel 
               label="Phone Number"
               inputType="text"
-              maxLength={255}
-              {...register('phoneNumber')}
+              maxLength={12} // Adjusted for the format 09XX-XXX-XXXX
+              {...register('phoneNumber', {
+                required: 'Phone number is required',
+                pattern: {
+                  value: /^\d{4}-\d{3}-\d{4}$/,
+                  message: 'Invalid phone number format (e.g., 09XX-XXX-XXXX)'
+                }
+              })}
+              error={errors.phoneNumber?.message}
             />
             <InputWithLabel 
               label="Emergency Contact Name"
               inputType="text"
               maxLength={255}
               {...register('emergencyContactName')}
+              error={errors.emergencyContactName?.message}
             />
             <InputWithLabel 
               label="Emergency Contact Number"
               inputType="text"
-              maxLength={255}
-              {...register('emergencyContactNumber')}
+              maxLength={12} // Adjusted for the format 09XX-XXX-XXXX
+              {...register('emergencyContactNumber', {
+                pattern: {
+                  value: /^\d{4}-\d{3}-\d{4}$/,
+                  message: 'Invalid phone number format (e.g., 09XX-XXX-XXXX)'
+                }
+              })}
+              error={errors.emergencyContactNumber?.message}
             />
             <PrimaryButton 
               className="col-start-2 col-span-1 p-3 mt-4"

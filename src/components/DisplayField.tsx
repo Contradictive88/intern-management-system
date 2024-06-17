@@ -8,8 +8,8 @@ interface DisplayFieldProps {
 const DisplayField: React.FC<DisplayFieldProps> = ({ label, value }) => {
   return (
     <span>
-      <label>{label}</label>
-      <div className="p-2 w-full">{value}</div>
+      <label className="font-bold text-lg">{label}</label>
+      <div className="p-2 w-full my-3 ml-3">{value}</div>
     </span>
   );
 };
