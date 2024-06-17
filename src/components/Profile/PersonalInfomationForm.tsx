@@ -19,6 +19,11 @@ interface FormData {
   placeOfBirth: string;
   dateOfBirth: string;
   gender: string;
+  email: string;
+  recoveryEmail: string,
+  phoneNumber: string,
+  emergencyContactName: string,
+  emergencyContactNumber: string,
 }
 
 const PersonalInformationPage: React.FC = () => {
@@ -40,6 +45,11 @@ const PersonalInformationPage: React.FC = () => {
       setValue('placeOfBirth', user.place_of_birth || '');
       setValue('dateOfBirth', user.date_of_birth || '');
       setValue('gender', user.gender || '');
+      setValue('email', user.email);
+      setValue('recoveryEmail', user.recovery_email || '');
+      setValue('phoneNumber', user.phone_number);
+      setValue('emergencyContactName', user.emergency_contact_name || '');
+      setValue('emergencyContactNumber', user.emergency_contact_number || '');
     }
   }, [user, setValue]);
 
@@ -103,6 +113,36 @@ const PersonalInformationPage: React.FC = () => {
               placeholder="Select a Gender"
               {...register('gender')}
             />
+            <InputWithLabel 
+              label="Email Address"
+              inputType="text"
+              maxLength={255}
+              {...register('email')}
+            />
+            <InputWithLabel 
+              label="Recovery Email"
+              inputType="text"
+              maxLength={255}
+              {...register('recoveryEmail')}
+            />
+            <InputWithLabel 
+              label="Phone Number"
+              inputType="text"
+              maxLength={255}
+              {...register('phoneNumber')}
+            />
+            <InputWithLabel 
+              label="Emergency Contact Name"
+              inputType="text"
+              maxLength={255}
+              {...register('emergencyContactName')}
+            />
+            <InputWithLabel 
+              label="Emergency Contact Number"
+              inputType="text"
+              maxLength={255}
+              {...register('emergencyContactNumber')}
+            />
             <PrimaryButton 
               className="col-start-2 col-span-1 p-3 mt-4"
               type="submit"
@@ -135,6 +175,26 @@ const PersonalInformationPage: React.FC = () => {
             <DisplayField 
               label="Gender"
               value={user?.gender || ''}
+            />
+            <DisplayField 
+              label="Email Address"
+              value={user?.email || ''}
+            />
+            <DisplayField 
+              label="Recovery Email"
+              value={user?.recovery_email || ''}
+            />
+            <DisplayField 
+              label="Phone Number"
+              value={user?.phone_number || ''}
+            />
+            <DisplayField 
+              label="Emergency Contact Name"
+              value={user?.emergency_contact_name || ''}
+            />
+            <DisplayField 
+              label="Emergency Contact Number"
+              value={user?.emergency_contact_number || ''}
             />
           </>
         )}
