@@ -151,7 +151,7 @@ const ContactDetailsForm: React.FC = () => {
               className="col-start-2 col-span-1 p-3 mt-4"
               type="submit"
             >
-              Update Info
+              Update Contact
             </PrimaryButton>
           </>
         )}

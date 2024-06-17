@@ -26,10 +26,10 @@ const PersonalInformationPage: React.FC = () => {
   const { user, loading, error } = useUser();
   
   // Use isEditing state from context
-  const { isEditing } = useEditViewMode(); 
+  const { isEditing, setIsEditing } = useEditViewMode(); // Assuming setIsEditing is provided by useEditViewMode
 
   // Initialize form methods from react-hook-form
-  const { register, handleSubmit, setValue } = useForm<FormData>();
+  const { register, handleSubmit, setValue, reset } = useForm<FormData>();
 
   // Initialize state to manage form values
   const [formData, setFormData] = useState<FormData>({
@@ -64,15 +64,25 @@ const PersonalInformationPage: React.FC = () => {
   // Handle form submission
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
     try {
+      // Format the data to match API expectations (snake_case)
+      const formattedData = {
+        first_name: formData.firstName,
+        middle_name: formData.middleName,
+        last_name: formData.lastName,
+        place_of_birth: formData.placeOfBirth,
+        date_of_birth: formData.dateOfBirth,
+        gender: formData.gender.toLowerCase() // Ensure lowercase as per your example
+      };
+
       const authToken = getCookie(document.cookie, 'auth_token');
-      const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/personal-information`, {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_LARAVEL_API_URL}/api/users/personal-information`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
           'Authorization': `Bearer ${authToken}`,
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(formattedData),
         credentials: 'include',
       });
 
@@ -81,7 +91,31 @@ const PersonalInformationPage: React.FC = () => {
         throw new Error(errorData.message || 'Failed to update personal information');
       }
 
-      // Handle success (e.g., show a success message)
+      // Handle success
+      // Reset form fields
+      reset({
+        firstName: formattedData.first_name,
+        middleName: formattedData.middle_name,
+        lastName: formattedData.last_name,
+        placeOfBirth: formattedData.place_of_birth,
+        dateOfBirth: formattedData.date_of_birth,
+        gender: formattedData.gender
+      });
+
+      // Update local state with new form data
+      setFormData({
+        firstName: formattedData.first_name,
+        middleName: formattedData.middle_name,
+        lastName: formattedData.last_name,
+        placeOfBirth: formattedData.place_of_birth,
+        dateOfBirth: formattedData.date_of_birth,
+        gender: formattedData.gender
+      });
+
+      // Set isEditing to false to switch to display mode
+      setIsEditing(false);
+
+      // Optionally, you can show a success message or perform other UI updates
     } catch (error: unknown) {
       if (error instanceof Error) {
         console.error(error.message || 'An unexpected error occurred');
