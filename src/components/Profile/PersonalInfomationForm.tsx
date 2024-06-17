@@ -1,5 +1,5 @@
 "use client"
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import InputWithLabel from '../InputWithLabel';
 import DateInput from '../DateInput';
@@ -26,20 +26,10 @@ const PersonalInformationPage: React.FC = () => {
   const { user } = useUser();
   
   // Use isEditing state from context
-  const { isEditing, setIsEditing } = useEditViewMode(); // Assuming setIsEditing is provided by useEditViewMode
+  const { isEditing, setIsEditing } = useEditViewMode();
 
   // Initialize form methods from react-hook-form
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm<FormData>();
-
-  // Initialize state to manage form values
-  const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    placeOfBirth: '',
-    dateOfBirth: '',
-    gender: ''
-  });
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm<FormData>();
 
   // Update form values from user data on component mount or user change
   useEffect(() => {
@@ -50,14 +40,6 @@ const PersonalInformationPage: React.FC = () => {
       setValue('placeOfBirth', user.place_of_birth || '');
       setValue('dateOfBirth', user.date_of_birth || '');
       setValue('gender', user.gender || '');
-      setFormData({
-        firstName: user.first_name,
-        middleName: user.middle_name || '',
-        lastName: user.last_name,
-        placeOfBirth: user.place_of_birth || '',
-        dateOfBirth: user.date_of_birth || '',
-        gender: user.gender || ''
-      });
     }
   }, [user, setValue]);
 
@@ -65,37 +47,9 @@ const PersonalInformationPage: React.FC = () => {
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
     try {
       await updatePersonalInformation(formData);
-
-      // Reset form fields
-      reset({
-        firstName: formData.firstName,
-        middleName: formData.middleName,
-        lastName: formData.lastName,
-        placeOfBirth: formData.placeOfBirth,
-        dateOfBirth: formData.dateOfBirth,
-        gender: formData.gender
-      });
-
-      // Update local state with new form data
-      setFormData({
-        firstName: formData.firstName,
-        middleName: formData.middleName,
-        lastName: formData.lastName,
-        placeOfBirth: formData.placeOfBirth,
-        dateOfBirth: formData.dateOfBirth,
-        gender: formData.gender
-      });
-
-      // Set isEditing to false to switch to display mode
-      setIsEditing(false);
-
-      // Optionally, you can show a success message or perform other UI updates
+      setIsEditing(false); // Set isEditing to false to switch to display mode
     } catch (error: unknown) {
-      if (error instanceof Error) {
-        console.error(error.message || 'An unexpected error occurred');
-      } else {
-        console.error('An unexpected error occurred');
-      } 
+      console.error((error as Error).message || 'An unexpected error occurred');
     }
   };
 
@@ -103,34 +57,7 @@ const PersonalInformationPage: React.FC = () => {
     <div className="grid grid-cols-1 gap-y-3 rounded-lg shadow-lg border m-4 p-4">
       <span className="text-3xl font-bold text-center mb-4">Personal Information</span>
       <form className="grid grid-cols-3 gap-x-5" onSubmit={handleSubmit(onSubmit)}>
-        {!isEditing ? (
-          <>
-            <DisplayField 
-              label="First Name"
-              value={formData.firstName}
-            />
-            <DisplayField 
-              label="Middle Name"
-              value={formData.middleName}
-            />
-            <DisplayField 
-              label="Last Name"
-              value={formData.lastName}
-            />
-            <DisplayField 
-              label="Place of Birth"
-              value={formData.placeOfBirth}
-            />
-            <DisplayField 
-              label="Date of Birth"
-              value={formData.dateOfBirth}
-            />
-            <DisplayField 
-              label="Gender"
-              value={formData.gender}
-            />
-          </>
-        ) : (
+        {isEditing ? (
           <>
             <InputWithLabel 
               label="First Name"
@@ -182,6 +109,33 @@ const PersonalInformationPage: React.FC = () => {
             >
               Update Info
             </PrimaryButton>
+          </>
+        ) : (
+          <>
+            <DisplayField 
+              label="First Name"
+              value={user?.first_name || ''}
+            />
+            <DisplayField 
+              label="Middle Name"
+              value={user?.middle_name || ''}
+            />
+            <DisplayField 
+              label="Last Name"
+              value={user?.last_name || ''}
+            />
+            <DisplayField 
+              label="Place of Birth"
+              value={user?.place_of_birth || ''}
+            />
+            <DisplayField 
+              label="Date of Birth"
+              value={user?.date_of_birth || ''}
+            />
+            <DisplayField 
+              label="Gender"
+              value={user?.gender || ''}
+            />
           </>
         )}
       </form>
