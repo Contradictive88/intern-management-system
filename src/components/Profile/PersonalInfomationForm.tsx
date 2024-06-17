@@ -254,7 +254,7 @@ const PersonalInformationPage: React.FC = () => {
               error={errors.emergencyContactNumber?.message}
             />
             <PrimaryButton 
-              className="col-start-2 col-span-1 p-3 mt-4"
+              className="col-span-3 p-3 mt-4"
               type="submit"
             >
               Update Info

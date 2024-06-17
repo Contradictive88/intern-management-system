@@ -11,7 +11,7 @@ const ChangePasswordForm: React.FC = () => {
   return (
     <div className="grid grid-cols-1 rounded-lg shadow-lg border m-4 p-4">
       <span className="text-3xl font-bold text-center mb-4">Change Password</span>
-      <form className="grid grid-cols-3 gap-x-5">
+      <form className="grid grid-cols-1 gap-x-5">
         <InputWithLabel 
           label="Old Password"
           inputType="password"
@@ -31,7 +31,7 @@ const ChangePasswordForm: React.FC = () => {
           maxLength={255}
         />
         <PrimaryButton 
-          className="col-start-2 col-span-1 p-3 mt-4"
+          className="p-3 mt-4"
           type="submit"
         >
           Update Password
