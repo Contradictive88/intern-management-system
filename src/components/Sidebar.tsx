@@ -15,7 +15,7 @@ const Sidebar: React.FC = () => {
   const isActive = (path: string) => pathname === path;
 
   return (
-    <aside className={`bg-gray-800 text-white h-full flex flex-col px-4 transition-all duration-300 ${isSidebarRetracted ? 'w-20' : 'w-64'}`}>
+    <aside className={`bg-main-800 text-white h-full flex flex-col px-4 transition-all duration-300 ${isSidebarRetracted ? 'w-20' : 'w-64'}`}>
       <h2 className="font-semibold py-5 my-2 flex items-center justify-center">
         <BiSolidCube className={`${isSidebarRetracted ? 'text-4xl' : 'mr-2 text-5xl'}`} />
         {!isSidebarRetracted && <span>Intern Management System</span>}

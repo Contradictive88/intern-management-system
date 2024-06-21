@@ -8,7 +8,7 @@ const PrimaryButton: React.FC<PrimaryButtonProps> = ({ children, type = 'button'
   return (
     <button
       type={type}
-      className={`bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-2xl text-lg ${className}`}
+      className={`bg-primary hover:bg-primary-hover text-white font-bold rounded-2xl text-lg ${className}`}
       onClick={onClick}
       {...rest}
     >

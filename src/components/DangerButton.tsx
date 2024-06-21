@@ -8,7 +8,7 @@ const DangerButton: React.FC<DangerButtonProps> = ({ children, type = 'button', 
   return (
     <button
       type={type}
-      className={`bg-red-600 hover:bg-red-700 text-white font-bold rounded-2xl text-lg ${className}`}
+      className={`bg-danger hover:danger-hover text-white font-bold rounded-2xl text-lg ${className}`}
       onClick={onClick}
       {...rest}
     >
