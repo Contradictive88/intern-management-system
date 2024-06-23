@@ -7,11 +7,11 @@ import SuccessButton from '../../components/SuccessButton';
 const Timer: React.FC = () => {
   return (
     <div className="rounded-lg shadow-lg border m-4 p-4">
-        <div className="flex items-center justify-between">
-            <span className="mr-2">
-                Start Time-In
+        <div className="flex items-center justify-between flex-wrap">
+            <span className="text-2xl font-bold mr-2">
+                8 hrs 0 mins and 0 secs left
             </span>
-            <div className="flex items-center">
+            <div className="flex items-center flex-wrap">
                 <PrimaryButton 
                     className="p-3 mr-2"
                 >
