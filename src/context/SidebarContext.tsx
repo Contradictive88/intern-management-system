@@ -14,22 +14,19 @@ interface SidebarProviderProps {
   children: ReactNode;
 }
 
+// Global variable to hold the state
+let isSidebarRetractedGlobal = false;
+
 // Create the provider component
 const SidebarProvider: React.FC<SidebarProviderProps> = ({ children }) => {
-  // Initialize the state
-  const [isSidebarRetracted, setIsSidebarRetracted] = useState<boolean>(() => {
-    const storedValue = sessionStorage.getItem('isSidebarRetracted');
-    return storedValue === 'true'; // Convert string to boolean
-  });
+  // Initialize the state from the global variable
+  const [isSidebarRetracted, setIsSidebarRetracted] = useState<boolean>(isSidebarRetractedGlobal);
 
   // Function to toggle the sidebar state
   const toggleSidebar = () => {
-    setIsSidebarRetracted(prev => {
-      const newValue = !prev;
-      // Update local storage
-      sessionStorage.setItem('isSidebarRetracted', newValue.toString()); // Convert boolean to string
-      return newValue;
-    });
+    const newValue = !isSidebarRetracted;
+    setIsSidebarRetracted(newValue);
+    isSidebarRetractedGlobal = newValue; // Update global variable
   };
 
   // Context value to be provided to the children components
@@ -52,4 +49,4 @@ const useSidebar = (): SidebarContextValue => {
 };
 
 export default SidebarProvider;
-export { useSidebar };
+export { useSidebar, SidebarContext };
