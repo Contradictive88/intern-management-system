@@ -9,6 +9,7 @@ import DisplayField from '../DisplayField';
 import { genderOptions } from '../../constants/genderOptions';
 import { useUser } from '../../context/UserContext';
 import updatePersonalInformation from '../../services/Profile/updatePersonalInformation';
+import DangerButton from '../DangerButton';
 
 // Define the interface for user data
 interface UserData {
@@ -252,12 +253,21 @@ const PersonalInformationPage: React.FC = () => {
               })}
               error={errors.emergencyContactNumber?.message}
             />
-            <PrimaryButton 
-              className="col-span-3 p-3 mt-4"
-              type="submit"
-            >
-              Update Info
-            </PrimaryButton>
+            <div className="grid grid-cols-2 col-span-3 gap-x-2">
+              <PrimaryButton 
+                className="col-span-1.5 p-3 mt-4"
+                type="submit"
+              >
+                Update Info
+              </PrimaryButton>
+              <DangerButton              
+                className="col-span-1.5 p-3 mt-4"
+                type="reset"
+                onClick={() => setIsEditing(false)}
+              >
+                Cancel
+              </DangerButton>
+            </div>
           </form>
         ) : (
           <div className="grid grid-cols-3 gap-x-5 px-8">
