@@ -8,7 +8,6 @@ import PrimaryButton from '../PrimaryButton';
 import DisplayField from '../DisplayField';
 import { genderOptions } from '../../constants/genderOptions';
 import { useUser } from '../../context/UserContext';
-import { useEditViewMode } from '../../context/EditViewModeContext';
 import updatePersonalInformation from '../../services/Profile/updatePersonalInformation';
 
 // Define the interface for user data
@@ -47,8 +46,8 @@ const PersonalInformationPage: React.FC = () => {
   // Get user context
   const { user } = useUser();
 
-  // Use isEditing state from context
-  const { isEditing, setIsEditing } = useEditViewMode();
+  // Use isEditing state from custom hook
+  const [isEditing, setIsEditing] = useState(false);
 
   // Initialize form methods from react-hook-form
   const { register, handleSubmit, setValue, formState: { errors }, reset } = useForm<FormData>();
@@ -79,7 +78,6 @@ const PersonalInformationPage: React.FC = () => {
   const onSubmit: SubmitHandler<FormData> = async (formData) => {
     try {
       await updatePersonalInformation(formData);
-      setIsEditing(false); // Set isEditing to false to switch to display mode
 
       // Construct displayUser object based on formData
       const updatedDisplayUser: UserData = {
@@ -114,6 +112,8 @@ const PersonalInformationPage: React.FC = () => {
         emergencyContactName: formData.emergencyContactName,
         emergencyContactNumber: formData.emergencyContactNumber,
       });
+
+      setIsEditing(false); // Set isEditing to false to switch to display mode
     } catch (error: unknown) {
       console.error((error as Error).message || 'An unexpected error occurred');
     }
@@ -122,9 +122,8 @@ const PersonalInformationPage: React.FC = () => {
   return (
     <div className="grid grid-cols-1 gap-y-3 rounded-lg shadow-lg border m-4 p-4 break-words">
       <span className="text-3xl font-bold text-center mb-4">Personal Information</span>
-      <form className="grid grid-cols-3 gap-x-5" onSubmit={handleSubmit(onSubmit)}>
         {isEditing ? (
-          <>
+          <form className="grid grid-cols-3 gap-x-5 px-8" onSubmit={handleSubmit(onSubmit)}>
             <InputWithLabel 
               label="First Name"
               inputType="text"
@@ -180,8 +179,8 @@ const PersonalInformationPage: React.FC = () => {
               options={genderOptions}
               placeholder="Select a Gender"
               {...register('gender', { 
-                required: 'Please select a gender' })
-              }
+                required: 'Please select a gender' 
+              })}
               error={errors.gender?.message}
             />
             <InputWithLabel 
@@ -259,9 +258,9 @@ const PersonalInformationPage: React.FC = () => {
             >
               Update Info
             </PrimaryButton>
-          </>
+          </form>
         ) : (
-          <>
+          <div className="grid grid-cols-3 gap-x-5 px-8">
             <DisplayField 
               label="First Name"
               value={displayUser?.first_name || 'N/A'}
@@ -310,9 +309,15 @@ const PersonalInformationPage: React.FC = () => {
               label="Emergency Contact Number"
               value={displayUser?.emergency_contact_number || 'N/A'}
             />
-          </>
+            <PrimaryButton 
+              className="col-span-3 p-3 mt-4"
+              type="button"
+              onClick={() => setIsEditing(true)}
+            >
+              Edit Info
+            </PrimaryButton>
+          </div>
         )}
-      </form>
     </div>
   );
 };

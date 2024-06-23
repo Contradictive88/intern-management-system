@@ -2,21 +2,16 @@ import Layout from '../../components/Layout';
 import PersonalInformationForm from '../../components/Profile/PersonalInfomationForm';
 import ChangePasswordForm from '../../components/Profile/ChangePasswordForm';
 import { UserProvider } from '../../context/UserContext';
-import { EditViewModeProvider } from '../../context/EditViewModeContext';
-import EditViewSwitch from '../../components/EditViewSwitch';
 
 const Profile: React.FC = () => {
     return (
         <Layout>
-            <EditViewModeProvider>
-                <EditViewSwitch />
-                <div className="grid grid-cols-1 gap-y-6 w-full">
-                    <UserProvider>
-                        <PersonalInformationForm />
-                        <ChangePasswordForm />
-                    </UserProvider>
-                </div>
-            </EditViewModeProvider>
+            <div className="grid grid-cols-1 gap-y-6 w-full">
+                <UserProvider>
+                    <PersonalInformationForm />
+                    <ChangePasswordForm />
+                </UserProvider>
+            </div>
         </Layout>
     );
 };
